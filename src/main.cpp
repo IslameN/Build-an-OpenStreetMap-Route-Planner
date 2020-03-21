@@ -27,6 +27,32 @@ static std::optional<std::vector<std::byte>> ReadFile(const std::string &path)
     return std::move(contents);
 }
 
+void ClearCin() {
+    std::cin.clear(); 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+int GetIntFromRange(int lower, int upper){
+    int input; 
+    while(!(std::cin >> input)) {
+        std::cout << "Wrong Input Type. Please try again.\n";
+        ClearCin();
+   }
+
+    //Bounds control
+    while(input < lower || input > upper) {
+        std::cout << "Out of Range. Re-enter option: ";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        //Second error catch. If out of range integer was entered, and then a non-integer this second one shall catch it
+        while(!(std::cin >> input)) {
+            std::cout << "Wrong Input Type. Please try again.\n";
+            ClearCin();
+        }
+    }
+    return input;
+}
+
 int main(int argc, const char **argv)
 {    
     std::string osm_data_file = "";
@@ -52,15 +78,17 @@ int main(int argc, const char **argv)
             osm_data = std::move(*data);
     }
     
-    // Input values
-    float start_x;
-    float start_y;
-    float end_x;
-    float end_y;
-    std::cout << "Introduce the coordinates of the starting point, separated by a space: ";
-    std::cin >> start_x >> start_y;
-    std::cout << "Introduce the coordinates of the ending point, separated by a space: ";
-    std::cin >> end_x >> end_y;
+    // Input values and validation
+    std::cout << "Enter values for start_x, start_y, end_x and end_y in this order using numbers from 0 to 100.\n";
+    float start_x = GetIntFromRange(0, 100);
+    float start_y = GetIntFromRange(0, 100);;
+    float end_x = GetIntFromRange(0, 100);;
+    float end_y = GetIntFromRange(0, 100);;
+
+    std::cout << "Start x: " << start_x << std::endl;
+    std::cout << "Start y: " << start_y << std::endl;
+    std::cout << "End x: " << end_x << std::endl;
+    std::cout << "End y: " << end_y << std::endl;
 
     // Build Model.
     RouteModel model{osm_data};
